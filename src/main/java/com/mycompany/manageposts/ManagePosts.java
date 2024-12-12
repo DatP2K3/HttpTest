@@ -11,6 +11,7 @@ package com.mycompany.manageposts;
 public class ManagePosts {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        ManagePostsGui form = new ManagePostsGui();
+        form.setVisible(true);
     }
 }

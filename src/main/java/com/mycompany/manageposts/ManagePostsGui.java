@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ManagePostsGui extends javax.swing.JFrame {
 
+    private List<Post> posts = new ArrayList<>();
     /**
      * Creates new form ManagePostsGui
      */
@@ -221,8 +224,8 @@ public class ManagePostsGui extends javax.swing.JFrame {
             String response = new String(responseBytes);
             inputStream.close();
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Post> posts = objectMapper.readValue(response, new TypeReference<List<Post>>() {});
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            posts = objectMapper.readValue(response, new TypeReference<List<Post>>() {});
+            DefaultTableModel model = (DefaultTableModel) postsTable.getModel();
             model.setRowCount(0);
             for (Post post : posts) {
                 model.addRow(new Object[]{post.getId(),post.getUserId(), post.getTitle(), post.getBody()});
@@ -247,7 +250,15 @@ public class ManagePostsGui extends javax.swing.JFrame {
     }//GEN-LAST:event_changeSelectRow
 
     private void export_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_export_btnActionPerformed
-        // TODO add your handling code here:
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))) {
+            for (Post post : posts) {
+                writer.write(post.toString());  // Ghi từng phần tử vào file
+                writer.newLine();  // Thêm dòng mới
+            }
+            System.out.println("Dữ liệu đã được ghi vào file output.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_export_btnActionPerformed
 
     /**
